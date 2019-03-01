@@ -1,0 +1,25 @@
+.channel-list{
+  /* border: 1px solid grey; */
+  padding: 10px;
+}
+
+.channel{
+  margin-bottom: 5px;
+  font-size: 20px;
+  border: 1px solid grey;
+}
+
+.channel-button{
+  padding: 5px;
+  border: none;
+  background: none;
+  width: 100%;
+}
+
+.active-channel{
+  background: lightgreen;
+}
+
+.channel-button:focus{
+  outline: none;
+}
