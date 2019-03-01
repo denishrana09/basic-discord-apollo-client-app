@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { graphql, compose, withApollo } from "react-apollo";
 import Messages from './messages';
 import MessageUploader from './message_uploader';
 
@@ -26,18 +26,25 @@ const NEW_MESSAGES_SUBSCRIPTION = gql`
 `
 
 class MessageView extends Component {
-  _subscribeToNewMessages = (subscribeToMore, channelId) => {
-    subscribeToMore({
+  constructor(props) {
+    super(props);
+    this.state = { data: '' }
+  }
+
+  componentDidMount() {
+    this.fetchData();
+
+    this.props.data.subscribeToMore({
       document: NEW_MESSAGES_SUBSCRIPTION,
-      variables: { id: channelId },
+      variables: { id: this.props.channelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         const newMessage = subscriptionData.data.messageAdded;
-        let i=0;
+        let i = 0;
         let exists = false;
-        for(i=0; i< prev.channel.messages.length; i=i+1){
+        for (i = 0; i < prev.channel.messages.length; i = i + 1) {
           exists = prev.channel.messages[i].id === newMessage.id;
-          if(exists){
+          if (exists) {
             break;
           }
         }
@@ -52,30 +59,39 @@ class MessageView extends Component {
           }
         })
       }
-    })
+    });
   }
+
+  async fetchData(){
+    const { client } = this.props;
+    const result = await client.query({
+      query: GET_MESSAGES_QUERY,
+      variables: { id: this.props.channelId }
+    });
+    this.setState({ data: result.data });
+    console.log('73 ', this.state.data);
+  }
+
+  componentDidUpdate(prev) {
+    // whenever we changes channel, it checks if "current opended channed" === "prev opened channel"
+    if(this.props.channelId !== prev.channelId){
+      // then again call componentDidMount which will again call query to get that particular channel's data
+      this.componentDidMount();
+    }
+  }
+
   render() {
     const channelId = this.props.channelId;
+    const { data } = this.state;
     return (
       <React.Fragment>
-        <Query query={GET_MESSAGES_QUERY} variables={{ id: channelId }} >
-          {({ loading, error, data, subscribeToMore }) => {
-            if (loading) return <div>Fetching</div>
-            if (error) return <div>Error</div>
-
-            this._subscribeToNewMessages(subscribeToMore, channelId);
-
-            return (
-              <React.Fragment>
-                <Messages data={data} />
-              </React.Fragment>
-            )
-          }}
-        </Query>
+        {/* pass "data" as prop only when it's available, o/w get error */}
+        {data && <Messages data={data} />}
         <MessageUploader channelId={channelId} />
       </React.Fragment>
     );
   }
 }
 
-export default MessageView;
+// "withApollo" will give you "client" object
+export default compose(graphql(GET_MESSAGES_QUERY, { options: (props) => ({ variables: { id: props.channelId } }) }),withApollo)(MessageView);
