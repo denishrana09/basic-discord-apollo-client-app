@@ -9,9 +9,11 @@ const channels = [{
   messages: [{
     id: '1',
     text: 'soccer is football',
+    channelId: '1',
   }, {
     id: '2',
     text: 'hello soccer world cup',
+    channelId: '1',
   }]
 }, {
   id: '2',
@@ -19,9 +21,11 @@ const channels = [{
   messages: [{
     id: '3',
     text: 'baseball is life',
+    channelId: '2',
   }, {
     id: '4',
     text: 'hello baseball world series',
+    channelId: '2',
   }]
 }];
 let nextId = 3;
@@ -47,7 +51,7 @@ exports.resolver = {
       if(!channel)
         throw new Error("Channel does not exist");
 
-      const newMessage = { id: String(nextMessageId++), text: message.text };
+      const newMessage = { id: String(nextMessageId++), text: message.text, channelId: message.channelId };
       channel.messages.push(newMessage);
 
       pubsub.publish('messageAdded', { messageAdded: newMessage, channelId: message.channelId });

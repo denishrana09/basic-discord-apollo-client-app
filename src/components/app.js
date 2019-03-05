@@ -26,7 +26,7 @@ class App extends Component {
             />
           </div>
           <div className="col-md-7">
-            <MessageView channelId={channelId} />
+            <MessageView channelId={channelId} totalChannels={2} />
           </div>
         </div>
       </div>
