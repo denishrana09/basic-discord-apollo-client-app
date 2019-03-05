@@ -5,8 +5,8 @@ import Messages from './messages';
 import MessageUploader from './message_uploader';
 
 const GET_MESSAGES_QUERY = gql`
-  query GetMessagesQuery($id: ID!){
-    channel(id: $id) {
+  query{
+    channels {
       id,
       name,
       messages{
@@ -30,75 +30,88 @@ const NEW_MESSAGES_SUBSCRIPTION = gql`
 class MessageView extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: '' }
+    this.state = {
+      data:
+        {
+          channels: []
+        }
+    }
   }
 
-  componentDidMount() {
-    this.fetchData();
-
+  subscriptionThing(){
     this.props.data.subscribeToMore({
       document: NEW_MESSAGES_SUBSCRIPTION,
       variables: { id: this.props.channelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
-        // const { data } = this.state;
-        // prev = data;
+        const channelId = this.props.channelId;
+
+        // console.log('48 ', channelId);
         const newMessage = subscriptionData.data.messageAdded;
+
+        console.log('50 ', newMessage);
+        // console.log('51 ', prev.channels);
 
         let i = 0;
         let exists = false;
-        for (i = 0; i < prev.channel.messages.length; i = i + 1) {
-          exists = prev.channel.messages[i].id === newMessage.id;
+        for (i = 0; i < prev.channels[newMessage.channelId-1].messages.length; i = i + 1) {
+          exists = prev.channels[newMessage.channelId-1].messages[i].id === newMessage.id;
           if (exists) {
             break;
           }
         }
         if (exists) return prev;
 
-        let latestData = Object.assign({}, prev, {
-          channel: {
-            id: prev.channel.id,
-            name: prev.channel.name,
-            channelId: this.props.channelId,
-            messages: [...prev.channel.messages, newMessage],
-            __typename: prev.channel.__typename
-          }
-        })
+        // let latestData = Object.assign({}, prev, {
+        //   channels: {
+        //     id: prev.channels[channelId-1].id,
+        //     name: prev.channels[channelId-1].name,
+        //     channelId,
+        //     messages: [...prev.channels[channelId-1].messages, newMessage],
+        //     __typename: prev.channels[channelId-1].__typename
+        //   }
+        // })
 
-        this.setState({ data: latestData });
+        this.state.data.channels && this.state.data.channels[newMessage.channelId-1].messages.push(newMessage);
+        // this.state.data.channels && this.state.data.channels[this.props.channelId-1].messages.push(newMessage);
 
-        return latestData;
+
+        console.log('73 ', this.state.data.channels);
+
+
+        // console.log('69 ', latestData);
+        // this.setState({ data: latestData });
+
+        return this.state.data;
         // if (newMessage.channelId === prev.channel.id)
         //   this.setState({ data: latestData });
       }
     });
   }
 
+  componentDidMount() {
+    this.fetchData();
+  }
+
   async fetchData(){
     const { client } = this.props;
     const result = await client.query({
-      query: GET_MESSAGES_QUERY,
-      variables: { id: this.props.channelId }
+      query: GET_MESSAGES_QUERY
     });
-    this.setState({ data: result.data });
-    console.log('73 ', this.state.data);
-  }
-
-  componentDidUpdate(prev) {
-    // whenever we changes channel, it checks if "current opended channed" === "prev opened channel"
-    if (this.props.channelId !== prev.channelId) {
-      // then again call componentDidMount which will again call query to get that particular channel's data
-      this.componentDidMount();
-    }
+    // console.log('82 ', result.data.channels);
+    this.setState({ data: { channels : result.data.channels } });
+    // this.state.data.channels.push(result.data.channels);
+    // console.log('84 ', this.state.data);
   }
 
   render() {
+    this.subscriptionThing();
     const channelId = this.props.channelId;
     const { data } = this.state;
     return (
       <React.Fragment>
         {/* pass "data" as prop only when it's available, o/w get error */}
-        {data && <Messages data={data} />}
+        {data && <Messages data={data.channels} channelId={channelId} />}
         <MessageUploader channelId={channelId} />
       </React.Fragment>
     );
