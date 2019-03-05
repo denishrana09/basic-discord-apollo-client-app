@@ -11,7 +11,8 @@ const GET_MESSAGES_QUERY = gql`
       name,
       messages{
         id,
-        text
+        text,
+        channelId
       }
     }
   }
@@ -21,6 +22,7 @@ const NEW_MESSAGES_SUBSCRIPTION = gql`
     messageAdded(channelId: $id) {
       id
       text
+      channelId
     }
   }
 `
@@ -39,7 +41,10 @@ class MessageView extends Component {
       variables: { id: this.props.channelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
+        // const { data } = this.state;
+        // prev = data;
         const newMessage = subscriptionData.data.messageAdded;
+
         let i = 0;
         let exists = false;
         for (i = 0; i < prev.channel.messages.length; i = i + 1) {
@@ -50,14 +55,21 @@ class MessageView extends Component {
         }
         if (exists) return prev;
 
-        return Object.assign({}, prev, {
+        let latestData = Object.assign({}, prev, {
           channel: {
             id: prev.channel.id,
             name: prev.channel.name,
+            channelId: this.props.channelId,
             messages: [...prev.channel.messages, newMessage],
             __typename: prev.channel.__typename
           }
         })
+
+        this.setState({ data: latestData });
+
+        return latestData;
+        // if (newMessage.channelId === prev.channel.id)
+        //   this.setState({ data: latestData });
       }
     });
   }
@@ -74,7 +86,7 @@ class MessageView extends Component {
 
   componentDidUpdate(prev) {
     // whenever we changes channel, it checks if "current opended channed" === "prev opened channel"
-    if(this.props.channelId !== prev.channelId){
+    if (this.props.channelId !== prev.channelId) {
       // then again call componentDidMount which will again call query to get that particular channel's data
       this.componentDidMount();
     }
@@ -94,4 +106,4 @@ class MessageView extends Component {
 }
 
 // "withApollo" will give you "client" object
-export default compose(graphql(GET_MESSAGES_QUERY, { options: (props) => ({ variables: { id: props.channelId } }) }),withApollo)(MessageView);
+export default compose(graphql(GET_MESSAGES_QUERY, { options: (props) => ({ variables: { id: props.channelId } }) }), withApollo)(MessageView);

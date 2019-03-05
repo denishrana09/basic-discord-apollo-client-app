@@ -13,6 +13,7 @@ input MessageInput{
 type Message {
   id: ID!
   text: String
+  channelId: String
 }
 
 # This type specifies the entry points into our API
