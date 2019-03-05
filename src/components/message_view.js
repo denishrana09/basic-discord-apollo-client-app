@@ -30,6 +30,7 @@ const NEW_MESSAGES_SUBSCRIPTION = gql`
 class MessageView extends Component {
   constructor(props) {
     super(props);
+    // make state based on return object of given Query
     this.state = {
       data:
         {
@@ -59,6 +60,7 @@ class MessageView extends Component {
 
         this.state.data.channels && this.state.data.channels[newMessage.channelId-1].messages.push(newMessage);
         console.log('73 ', this.state.data.channels);
+        // this "return" of "subscribeToMore" will make sure that you see updated data instantly
         return this.state.data;
       }
     });
@@ -68,6 +70,7 @@ class MessageView extends Component {
     this.fetchData();
 
     let totalChannels = this.props.totalChannels;
+    // start subscription for all the channels only for one time
     for(let i=0;i<totalChannels;i++)
       this.subscriptionThing(i+1);
   }

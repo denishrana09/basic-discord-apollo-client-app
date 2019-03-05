@@ -5,10 +5,10 @@ import '../messages.css'
 class Messages extends Component {
   render() {
     const data = this.props.data;
+    // "data" contains all the channels messages
     const channelId = this.props.channelId;
-    // console.log('8 ', data);
+    // we will show user only those data with respected channel
     const dataToShow = data[channelId-1];
-    // console.log('11 ', dataToShow);
     return (
       <ScrollToBottom className="messages-wrp container">
         {dataToShow && dataToShow.messages.map(message => (
