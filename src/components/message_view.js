@@ -38,19 +38,14 @@ class MessageView extends Component {
     }
   }
 
-  subscriptionThing(){
+  subscriptionThing(cId){
     this.props.data.subscribeToMore({
       document: NEW_MESSAGES_SUBSCRIPTION,
-      variables: { id: this.props.channelId },
+      variables: { id: cId },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        const channelId = this.props.channelId;
+        if (!subscriptionData.data) return prev;
 
-        // console.log('48 ', channelId);
         const newMessage = subscriptionData.data.messageAdded;
-
-        console.log('50 ', newMessage);
-        // console.log('51 ', prev.channels);
 
         let i = 0;
         let exists = false;
@@ -62,35 +57,19 @@ class MessageView extends Component {
         }
         if (exists) return prev;
 
-        // let latestData = Object.assign({}, prev, {
-        //   channels: {
-        //     id: prev.channels[channelId-1].id,
-        //     name: prev.channels[channelId-1].name,
-        //     channelId,
-        //     messages: [...prev.channels[channelId-1].messages, newMessage],
-        //     __typename: prev.channels[channelId-1].__typename
-        //   }
-        // })
-
         this.state.data.channels && this.state.data.channels[newMessage.channelId-1].messages.push(newMessage);
-        // this.state.data.channels && this.state.data.channels[this.props.channelId-1].messages.push(newMessage);
-
-
         console.log('73 ', this.state.data.channels);
-
-
-        // console.log('69 ', latestData);
-        // this.setState({ data: latestData });
-
         return this.state.data;
-        // if (newMessage.channelId === prev.channel.id)
-        //   this.setState({ data: latestData });
       }
     });
   }
 
   componentDidMount() {
     this.fetchData();
+
+    let totalChannels = this.props.totalChannels;
+    for(let i=0;i<totalChannels;i++)
+      this.subscriptionThing(i+1);
   }
 
   async fetchData(){
@@ -98,14 +77,10 @@ class MessageView extends Component {
     const result = await client.query({
       query: GET_MESSAGES_QUERY
     });
-    // console.log('82 ', result.data.channels);
     this.setState({ data: { channels : result.data.channels } });
-    // this.state.data.channels.push(result.data.channels);
-    // console.log('84 ', this.state.data);
   }
 
   render() {
-    this.subscriptionThing();
     const channelId = this.props.channelId;
     const { data } = this.state;
     return (
