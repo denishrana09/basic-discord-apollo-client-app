@@ -27,7 +27,7 @@ const server = express();
 //Wrap the Express server
 const ws = createServer(server);
 ws.listen(PORT, () => {
-  console.log(`GraphQL Server is now running on http://afternoon-cliffs-73721.herokuapp.com:${PORT}`);
+  console.log(`GraphQL Server is now running on http://localhost:${PORT}`);
   // Set up the WebSocket for handling GraphQL subscriptions
   new SubscriptionServer({
     execute,
@@ -42,10 +42,10 @@ ws.listen(PORT, () => {
 
 server.use('/graphiql', graphiqlExpress({
   endpointURL: '/graphql',
-  subscriptionsEndpoint: `ws://afternoon-cliffs-73721.herokuapp.com:4000/subscriptions`
+  subscriptionsEndpoint: `ws://localhost:4000/subscriptions`
 }));
 
-server.use('*', cors({ origin: 'http://afternoon-cliffs-73721.herokuapp.com:3000' }));
+server.use('*', cors({ origin: 'http://localhost:3000' }));
 
 server.use('/graphql', bodyParser.json(), graphqlExpress({
   schema: executableSchema
