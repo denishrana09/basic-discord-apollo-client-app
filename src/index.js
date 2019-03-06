@@ -11,11 +11,11 @@ import { split } from 'apollo-link';
 import * as serviceWorker from './serviceWorker';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql'
+  uri: 'https://afternoon-cliffs-73721.herokuapp.com:4000/graphql'
 })
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000/subscriptions`,
+  uri: `ws://afternoon-cliffs-73721.herokuapp.com:4000/subscriptions`,
   options: {
     reconnect: true
   }
