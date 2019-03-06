@@ -38,8 +38,8 @@
 
 .hide{
   background: transparent;
-  width: 10px;
-  height: 10px;
+  width: 25px;
+  height: auto;
   border-radius: 25px;
   float: right;
 }

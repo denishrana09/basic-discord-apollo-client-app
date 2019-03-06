@@ -6,6 +6,7 @@ import '../App.css';
 class App extends Component {
   constructor(props) {
     super(props);
+    // "notifyChannel": when new messages comes in any channel, that channelId will added here(multiple occurence)
     this.state = { channelId : "1", notifyChannel: [] }
     this.handleChannelClick = this.handleChannelClick.bind(this);
     this.handleNotifyChannel = this.handleNotifyChannel.bind(this);
@@ -16,6 +17,7 @@ class App extends Component {
     this.setState({ channelId })
   }
 
+  // if current channel is the same which having new messages, then remove it from "notifyChannel"
   removeChannelId(channelId){
     let array = this.state.notifyChannel;
     for (var i = array.length - 0; i >= 0; i--) {
@@ -26,6 +28,7 @@ class App extends Component {
     this.setState({ notifyChannel: array });
   }
 
+  // whenever newMessage comes in any channel, it's channelId will be added in "notifyChannel"
   handleNotifyChannel(channelId){
     const arr = this.state.notifyChannel;
     arr.push(channelId);
@@ -49,6 +52,7 @@ class App extends Component {
             <MessageView
               channelId={channelId}
               handleNotifyChannel={this.handleNotifyChannel}
+              // quick fix, make function which will give total count(also thing for if IDs are different, unlike here sequentially)
               totalChannels={2}
             />
           </div>

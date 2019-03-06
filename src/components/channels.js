@@ -10,6 +10,7 @@ class Channels extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.mainArray !== this.props.mainArray){
+      // when newMessages comes, check if it's in same Channel arrival, if yes then remove that ChannelId
       this.handleChannelIdRemove();
     }
   }
@@ -52,6 +53,8 @@ class Channels extends Component {
               {channel.name}
               <span
                 className={
+                  // when array is empty, it will return "undefined" for our expression
+                  // if it's not undefined, then get particular channel's count and set it.
                   (counterArray[idArray.indexOf(channel.id)]!==undefined)
                   ? "notify"
                   : "hide"

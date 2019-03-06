@@ -27,6 +27,9 @@ class ChannelView extends Component {
     this.props.handleChannelClick(channelId);
   }
 
+  //eg: arr = ["1","1","2","1"]
+  //      a = ["1","2"]
+  //      b = ["3","1"]
   countItemsOfArray(arr) {
     var a = [], b = [], prev;
 
