@@ -47,7 +47,9 @@ class MessageView extends Component {
         if (!subscriptionData.data) return prev;
 
         const newMessage = subscriptionData.data.messageAdded;
-
+        if(this.props.channelId !== newMessage.channelId){
+          this.props.handleNotifyChannel(newMessage.channelId);
+        }
         let i = 0;
         let exists = false;
         for (i = 0; i < prev.channels[newMessage.channelId-1].messages.length; i = i + 1) {
@@ -59,7 +61,6 @@ class MessageView extends Component {
         if (exists) return prev;
 
         this.state.data.channels && this.state.data.channels[newMessage.channelId-1].messages.push(newMessage);
-        console.log('73 ', this.state.data.channels);
         // this "return" of "subscribeToMore" will make sure that you see updated data instantly
         return this.state.data;
       }

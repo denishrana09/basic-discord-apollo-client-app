@@ -23,3 +23,19 @@
 .channel-button:focus{
   outline: none;
 }
+
+.notify{
+  background: green;
+  width: 25px;
+  border-radius: 25px;
+  float: right;
+  color: white;
+}
+
+.hide{
+  background: transparent;
+  width: 10px;
+  height: 10px;
+  border-radius: 25px;
+  float: right;
+}
