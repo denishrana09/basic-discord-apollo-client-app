@@ -43,6 +43,7 @@ class Channels extends Component {
 
     return (
       <div className="channel-list">
+        <h3>Channels</h3>
         {data.channels.map(channel => (
           <div key={channel.id} className="channel">
             <button

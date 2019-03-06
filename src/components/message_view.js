@@ -89,6 +89,7 @@ class MessageView extends Component {
     const { data } = this.state;
     return (
       <React.Fragment>
+        <h3 className="message-h3">Messages</h3>
         {/* pass "data" as prop only when it's available, o/w get error */}
         {data && <Messages data={data.channels} channelId={channelId} />}
         <MessageUploader channelId={channelId} />

@@ -16,6 +16,10 @@
   width: 100%;
 }
 
+.channel-button::first-letter {
+  text-transform: uppercase;
+}
+
 .active-channel{
   background: lightgreen;
 }

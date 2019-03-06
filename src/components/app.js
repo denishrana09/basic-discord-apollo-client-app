@@ -37,7 +37,7 @@ class App extends Component {
     return (
       <div className="App container">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-3 col-12">
             <ChannelView
               channelId={channelId}
               handleChannelClick={this.handleChannelClick}
@@ -45,7 +45,7 @@ class App extends Component {
               removeChannelId={this.removeChannelId}
             />
           </div>
-          <div className="col-md-7">
+          <div className="col-md-7 col-12">
             <MessageView
               channelId={channelId}
               handleNotifyChannel={this.handleNotifyChannel}
