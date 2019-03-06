@@ -47,9 +47,13 @@ class MessageView extends Component {
         if (!subscriptionData.data) return prev;
 
         const newMessage = subscriptionData.data.messageAdded;
-
+        // if current channel id is different than newMessage channelId only then add that channelId in notifyChannel array of App.js
+        if(this.props.channelId !== newMessage.channelId){
+          this.props.handleNotifyChannel(newMessage.channelId);
+        }
         let i = 0;
         let exists = false;
+        // important code
         for (i = 0; i < prev.channels[newMessage.channelId-1].messages.length; i = i + 1) {
           exists = prev.channels[newMessage.channelId-1].messages[i].id === newMessage.id;
           if (exists) {
@@ -58,8 +62,9 @@ class MessageView extends Component {
         }
         if (exists) return prev;
 
+        // if this.state.data.channels exists then
+        // add that message in the respected channel, that channelId we get from the returned newMessage
         this.state.data.channels && this.state.data.channels[newMessage.channelId-1].messages.push(newMessage);
-        console.log('73 ', this.state.data.channels);
         // this "return" of "subscribeToMore" will make sure that you see updated data instantly
         return this.state.data;
       }
@@ -88,6 +93,7 @@ class MessageView extends Component {
     const { data } = this.state;
     return (
       <React.Fragment>
+        <h3 className="message-h3">Messages</h3>
         {/* pass "data" as prop only when it's available, o/w get error */}
         {data && <Messages data={data.channels} channelId={channelId} />}
         <MessageUploader channelId={channelId} />

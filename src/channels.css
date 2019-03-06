@@ -16,10 +16,30 @@
   width: 100%;
 }
 
+.channel-button::first-letter {
+  text-transform: uppercase;
+}
+
 .active-channel{
   background: lightgreen;
 }
 
 .channel-button:focus{
   outline: none;
+}
+
+.notify{
+  background: green;
+  width: 25px;
+  border-radius: 25px;
+  float: right;
+  color: white;
+}
+
+.hide{
+  background: transparent;
+  width: 25px;
+  height: auto;
+  border-radius: 25px;
+  float: right;
 }

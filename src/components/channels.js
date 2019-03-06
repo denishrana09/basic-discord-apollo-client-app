@@ -5,20 +5,63 @@ class Channels extends Component {
   constructor(props) {
     super(props);
     this.handleChannelClick = this.handleChannelClick.bind(this);
+    this.removeChannelId = this.removeChannelId.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.mainArray !== this.props.mainArray){
+      // when newMessages comes, check if it's in same Channel arrival, if yes then remove that ChannelId
+      this.handleChannelIdRemove();
+    }
   }
 
   handleChannelClick(channelId){
     this.props.handleChannelClick(channelId);
   }
 
+  removeChannelId(channelId){
+    this.props.removeChannelId(channelId);
+  }
+
+  handleChannelIdRemove(){
+    let mainArray = this.props.mainArray;
+    const channelId = this.props.channelId;
+
+    let idArray = mainArray[0];
+
+    if(idArray.includes(channelId)){
+      this.removeChannelId(channelId);
+    }
+  }
+
   render() {
     let data = this.props.data;
+    let mainArray = this.props.mainArray;
+    const channelId = this.props.channelId;
+
+    let idArray = mainArray[0];
+    let counterArray = mainArray[1];
+
     return (
       <div className="channel-list">
+        <h3>Channels</h3>
         {data.channels.map(channel => (
           <div key={channel.id} className="channel">
-            <button className={channel.id===this.props.channelId ? 'channel-button active-channel': 'channel-button'} onClick={() => {this.handleChannelClick(channel.id)}}>
+            <button
+              className={channel.id===channelId ? 'channel-button active-channel': 'channel-button'}
+              onClick={() => {this.handleChannelClick(channel.id)}}>
               {channel.name}
+              <span
+                className={
+                  // when array is empty, it will return "undefined" for our expression
+                  // if it's not undefined, then get particular channel's count and set it.
+                  (counterArray[idArray.indexOf(channel.id)]!==undefined)
+                  ? "notify"
+                  : "hide"
+                }
+              >
+                {counterArray[idArray.indexOf(channel.id)]}
+              </span>
             </button>
           </div>
         ))}

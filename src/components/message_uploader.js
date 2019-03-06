@@ -46,9 +46,9 @@ class MessageUploader extends Component {
         <Mutation mutation={POST_MUTATION}>
           {message => (
             <React.Fragment>
-              <input className="message-input col-md-10" type="text" onKeyPress={(e) => { this.uploadMessage(e, message) }}
+              <input className="message-input col-md-9 col-12" type="text" onKeyPress={(e) => { this.uploadMessage(e, message) }}
                 placeholder="write something..." onChange={this.handleChange} value={this.state.messageText} />
-              <button onClick={() => { this.uploadMessageNow(message) }} className="col-md-2 submit-btn">
+              <button onClick={() => { this.uploadMessageNow(message) }} className="col-md-3 submit-btn">
                 Submit
               </button>
             </React.Fragment>
